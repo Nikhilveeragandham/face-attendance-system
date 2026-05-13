@@ -1,3 +1,7 @@
+const BASE_URL = "https://your-render-url.onrender.com";
+
+
+
 const form = document.getElementById("studentForm");
 const studentList = document.getElementById("studentList");
 
@@ -17,7 +21,7 @@ async function loadStudents() {
     try {
 
         const response =
-            await fetch("https://your-render-url.onrender.com/api/students");
+            await fetch(`${BASE_URL}/api/students`);
 
         const students =
             await response.json();
@@ -58,7 +62,7 @@ form.addEventListener("submit", async (e) => {
     try {
 
         const response =
-            await fetch("https://your-render-url.onrender.com/api/students", {
+            await fetch(`${BASE_URL}/api/students`, {
 
                 method: "POST",
 
@@ -74,7 +78,8 @@ form.addEventListener("submit", async (e) => {
 
             });
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         console.log(data);
 
@@ -102,16 +107,6 @@ async function startWebcam() {
         console.log("Webcam Error:", error);
     }
 }
-
-
-
-captureBtn.addEventListener("click", () => {
-
-    const context =
-        canvas.getContext("2d");
-
-    context.drawImage(video, 0, 0, 320, 240);
-});
 
 
 
@@ -155,7 +150,7 @@ registerFaceBtn.addEventListener("click", async () => {
         console.log("Descriptor Length:", faceDescriptor.length);
 
         const response =
-            await fetch("/api/students/register-face", {
+            await fetch(`${BASE_URL}/api/students/register-face`, {
 
                 method: "POST",
 
@@ -170,7 +165,8 @@ registerFaceBtn.addEventListener("click", async () => {
 
             });
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         alert(data.message);
 
@@ -180,7 +176,9 @@ registerFaceBtn.addEventListener("click", async () => {
 });
 
 
+
 let recognitionRunning = false;
+const markedToday = new Set();
 
 async function startRecognition() {
 
@@ -190,7 +188,7 @@ async function startRecognition() {
     try {
 
         const response =
-            await fetch("/api/students/with-face");
+            await fetch(`${BASE_URL}/api/students/with-face`);
 
         const students =
             await response.json();
@@ -251,6 +249,8 @@ async function startRecognition() {
                 recognitionResult.innerText =
                     `Recognized: ${result.label}`;
 
+                if (markedToday.has(result.label)) return;
+
                 const matchedStudent =
                     students.find(
                         s => s.name === result.label
@@ -258,7 +258,9 @@ async function startRecognition() {
 
                 if (!matchedStudent) return;
 
-                await fetch("/api/attendance/mark", {
+                markedToday.add(result.label);
+
+                await fetch(`${BASE_URL}/api/attendance/mark`, {
 
                     method: "POST",
 
@@ -267,13 +269,8 @@ async function startRecognition() {
                     },
 
                     body: JSON.stringify({
-
-                        rollNumber:
-                            matchedStudent.rollNumber,
-
-                        name:
-                            matchedStudent.name
-
+                        rollNumber: matchedStudent.rollNumber,
+                        name: matchedStudent.name
                     })
 
                 });
@@ -292,7 +289,13 @@ async function startRecognition() {
 }
 
 
+
+async function init() {
+
+    await startWebcam();
+    await loadModels();
+    startRecognition();
+}
+
 loadStudents();
-startWebcam();
-loadModels();
-startRecognition();
+init();
