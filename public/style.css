@@ -1,0 +1,40 @@
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+}
+
+.container {
+    width: 350px;
+    margin: 100px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+video,
+canvas {
+    border: 2px solid black;
+    margin-top: 10px;
+}
+.video-container {
+    position: relative;
+    width: 320px;
+}
+
+.video-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
