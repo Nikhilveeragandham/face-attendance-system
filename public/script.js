@@ -17,7 +17,7 @@ async function loadStudents() {
     try {
 
         const response =
-            await fetch("/api/students");
+            await fetch("https://your-render-url.onrender.com/api/students");
 
         const students =
             await response.json();
@@ -58,7 +58,7 @@ form.addEventListener("submit", async (e) => {
     try {
 
         const response =
-            await fetch("/api/students", {
+            await fetch("https://your-render-url.onrender.com/api/students", {
 
                 method: "POST",
 
